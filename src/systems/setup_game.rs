@@ -1,10 +1,8 @@
 #![allow(dead_code)]
 use bevy::{
     math::Vec3,
-    prelude::{
-        Assets, Commands, Component, Image, OrthographicCameraBundle, Res, ResMut, Transform,
-    },
-    sprite::{SpriteSheetBundle, TextureAtlas},
+    prelude::{OrthographicCameraBundle, Transform, Commands, Res},
+    sprite::SpriteSheetBundle,
 };
 
 use crate::{
