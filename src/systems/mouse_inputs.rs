@@ -1,25 +1,31 @@
+use std::time::Duration;
+
 use bevy::{
     input::mouse::MouseButtonInput,
     math::{Vec2, Vec3},
-    prelude::{Commands, EventReader, Res, Transform},
+    prelude::{Commands, EventReader, Res, Transform, Query, With, Camera},
     sprite::SpriteSheetBundle,
-    window::Windows,
+    window::Windows, core::Timer,
 };
 
-use crate::{animations::AnimationHandles, components::Position};
+use crate::{animations::AnimationHandles, components::Position, utils, AnimationType};
+
+
 
 fn spawn_monster(
     commands: &mut Commands,
-    position: Vec2,
+    position: Vec3,
     animation_handles: &Res<AnimationHandles>,
 ) {
     commands
         .spawn()
         .insert(Position::new(position.x, position.y))
+        .insert(AnimationType::Repeat)
+        .insert(Timer::new(Duration::from_millis(16), false))
         .insert_bundle(SpriteSheetBundle {
             texture_atlas: animation_handles.mummy_idle.clone_weak(),
             transform: Transform::from_scale(Vec3::splat(0.1))
-                .with_translation(Vec3::new(position.x, position.y, 1.0)),
+                .with_translation(position),
             ..Default::default()
         });
 }
@@ -29,6 +35,7 @@ pub fn mouse_button_events(
     mut mousebtn_evr: EventReader<MouseButtonInput>,
     windows: Res<Windows>,
     animation_handles: Option<Res<AnimationHandles>>,
+    camera: Query<&Transform, With<Camera>>
 ) {
     use bevy::input::ElementState;
     let window = windows.get_primary().unwrap();
@@ -38,6 +45,14 @@ pub fn mouse_button_events(
             ElementState::Pressed => {
                 if let Some(position) = window.cursor_position() {
                     if let Some(animation_handles) = animation_handles.as_ref() {
+                        let camera = camera.single();
+
+                        let position = utils::window_to_world(
+                            position,
+                            window,
+                            camera
+                        );
+
                         spawn_monster(&mut commands, position, &animation_handles);
                     }
                 }

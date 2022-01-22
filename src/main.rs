@@ -11,6 +11,7 @@ mod components;
 mod events;
 mod gamestate;
 mod systems;
+mod utils;
 
 #[allow(dead_code)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
