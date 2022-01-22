@@ -5,14 +5,14 @@ use bevy::{core::Timer, math::Vec3, prelude::*, sprite::SpriteSheetBundle};
 
 use crate::{
     animations::AnimationHandles,
-    components::{Name, Position, Role},
+    components::{Name, Position, Role, PlayerMovement},
     AnimationType,
 };
 
 pub(crate) fn setup_game(mut commands: Commands, animation_handles: Res<AnimationHandles>) {
     commands
         .spawn()
-        .insert(Position::new(10., 10.))
+        .insert(Position::new(-20., 0.))
         .insert(Name("Player 1".to_string()))
         .insert(Role::Defender)
         .insert_bundle(SpriteSheetBundle {
@@ -22,11 +22,12 @@ pub(crate) fn setup_game(mut commands: Commands, animation_handles: Res<Animatio
             ..Default::default()
         })
         .insert(Timer::new(Duration::from_millis(16), false))
+        .insert(PlayerMovement::default())
         .insert(AnimationType::Repeat);
 
     commands
         .spawn()
-        .insert(Position::new(10., 20.))
+        .insert(Position::new(20., 0.))
         .insert(Name("Player 2".to_string()))
         .insert(Role::Assailant)
         .insert_bundle(SpriteSheetBundle {
