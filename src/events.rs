@@ -1,6 +1,9 @@
 #![allow(dead_code)]
-use bevy::prelude::{Entity, EventReader};
+use bevy::prelude::{Entity, EventReader, ResMut};
 
+use crate::gamestate::GameData;
+
+/// EndRoundEvent is sent when the loose (or win) condition is reached in the current round.
 pub struct EndRoundEvent {
     kind: EndRoundKind,
 }
@@ -15,20 +18,29 @@ pub enum FailureKind {
     DeadPlayer(Entity),
 }
 
-fn end_round_event_listener(mut events: EventReader<EndRoundEvent>) {
+fn end_round_event_listener(
+    mut events: EventReader<EndRoundEvent>,
+    mut gamedata: ResMut<GameData>,
+) {
     for event in events.iter() {
         match &event.kind {
-            EndRoundKind::Failed(failure_kind) => match failure_kind {
-                FailureKind::Timer(monsters_left) => {
-                    println!("Failed with {monsters_left} monster left.")
+            EndRoundKind::Failed(failure_kind) => {
+                gamedata.time_before_start.reset();
+                match failure_kind {
+                    FailureKind::Timer(monsters_left) => {
+                        println!("Failed with {monsters_left} monster left.")
+                    }
+                    FailureKind::DeadPlayer(_entity) => {
+                        println!("Failed because a player is dead.")
+                    }
                 }
-                FailureKind::DeadPlayer(_entity) => println!("Failed because a player is dead."),
-            },
+            }
             EndRoundKind::Success(time_left) => println!("You win with {time_left} seconds left."),
         }
     }
 }
 
+/// StartRoundEvent is sent when the Timer started by the listenner of the `EndRoundEvent` ends.
 pub struct StartRoundEvent;
 
 fn start_round_event(mut events: EventReader<StartRoundEvent>) {

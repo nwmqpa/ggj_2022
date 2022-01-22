@@ -1,10 +1,11 @@
 use bevy::{asset::LoadState, ecs::event, prelude::*};
+use systems::setup_game::setup_game;
 
 mod events;
+mod gamestate;
 mod systems;
-use std::collections::HashMap;
 
-use crate::animation::generate_texture_atlas_from_sprites;
+use std::collections::HashMap;
 
 mod animation;
 
@@ -31,13 +32,14 @@ enum AnimationType {
 fn main() {
     App::new()
         .init_resource::<AnimationHandles>()
+        .init_resource::<gamestate::GameData>()
         .add_event::<events::EndRoundEvent>()
         .add_event::<events::StartRoundEvent>()
         .add_plugins(DefaultPlugins)
         .add_state(AppState::PreInit)
         .add_system_set(SystemSet::on_enter(AppState::PreInit).with_system(load_textures))
         .add_system_set(SystemSet::on_update(AppState::PreInit).with_system(check_textures))
-        .add_system_set(SystemSet::on_enter(AppState::Init).with_system(setup))
+        .add_system_set(SystemSet::on_enter(AppState::Init).with_system(systems::setup_game::setup_game))
         .add_system(animate_sprite_system)
         .run();
 }
@@ -71,44 +73,6 @@ fn check_textures(
     if let LoadState::Loaded = asset_server.get_group_load_state(handle_ids.iter().map(|h| h.id)) {
         state.set(AppState::Init).unwrap();
     }
-}
-
-fn setup(
-    mut commands: Commands,
-    mut animation_handles: ResMut<AnimationHandles>,
-    mut texture_atlases: ResMut<Assets<TextureAtlas>>,
-    mut textures: ResMut<Assets<Image>>,
-) {
-    let mut texture_atlas_handles = vec![];
-
-    for (name, handles) in animation_handles.sprite_handles.iter() {
-        texture_atlas_handles.push((
-            name.clone(),
-            generate_texture_atlas_from_sprites(
-                10,
-                handles.clone(),
-                &mut textures,
-                &mut texture_atlases,
-            ),
-        ));
-    }
-
-    animation_handles.texture_atlas_handles = texture_atlas_handles.into_iter().collect();
-
-    commands
-        .spawn_bundle(SpriteSheetBundle {
-            texture_atlas: animation_handles
-                .texture_atlas_handles
-                .get("idle")
-                .unwrap()
-                .clone_weak(),
-            transform: Transform::from_scale(Vec3::splat(1.0)),
-            ..Default::default()
-        })
-        .insert(Timer::from_seconds(0.016, true))
-        .insert(AnimationType::Repeat);
-
-    commands.spawn_bundle(OrthographicCameraBundle::new_2d());
 }
 
 fn animate_sprite_system(
