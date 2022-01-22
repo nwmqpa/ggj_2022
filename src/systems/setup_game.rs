@@ -6,8 +6,7 @@ use bevy::{
 };
 
 use crate::{
-    components::{Name, Position, Role},
-    AnimationHandles,
+    components::{Name, Position, Role}, animations::AnimationHandles,
 };
 
 pub(crate) fn setup_game(mut commands: Commands, animation_handles: Res<AnimationHandles>) {

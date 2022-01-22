@@ -1,6 +1,8 @@
+use animations::AnimationHandles;
 use bevy::prelude::*;
-use bevy_asset_loader::{AssetCollection, AssetLoader};
+use bevy_asset_loader::AssetLoader;
 
+mod animations;
 mod components;
 mod events;
 mod gamestate;
@@ -20,109 +22,6 @@ enum AnimationType {
     Once,
 }
 
-#[derive(AssetCollection)]
-struct AnimationHandles {
-    #[asset(texture_atlas(
-        tile_size_x = 560.,
-        tile_size_y = 480.,
-        columns = 15,
-        rows = 17,
-        padding_x = 0.,
-        padding_y = 0.
-    ))]
-    #[asset(path = "textures/hero_guy/idle/spritesheet.png")]
-    hero_guy_idle: Handle<TextureAtlas>,
-
-    #[asset(texture_atlas(
-        tile_size_x = 560.,
-        tile_size_y = 480.,
-        columns = 12,
-        rows = 13,
-        padding_x = 0.,
-        padding_y = 0.
-    ))]
-    #[asset(path = "textures/hero_guy/dying/spritesheet.png")]
-    hero_guy_dying: Handle<TextureAtlas>,
-
-    #[asset(texture_atlas(
-        tile_size_x = 560.,
-        tile_size_y = 480.,
-        columns = 12,
-        rows = 13,
-        padding_x = 0.,
-        padding_y = 0.
-    ))]
-    #[asset(path = "textures/hero_guy/melee_attack/spritesheet.png")]
-    hero_guy_melee_attack: Handle<TextureAtlas>,
-
-    #[asset(texture_atlas(
-        tile_size_x = 560.,
-        tile_size_y = 480.,
-        columns = 13,
-        rows = 15,
-        padding_x = 0.,
-        padding_y = 0.
-    ))]
-    #[asset(path = "textures/hero_guy/running/spritesheet.png")]
-    hero_guy_running: Handle<TextureAtlas>,
-
-    
-    #[asset(texture_atlas(
-        tile_size_x = 900.,
-        tile_size_y = 900.,
-        columns = 12,
-        rows = 13,
-        padding_x = 0.,
-        padding_y = 0.
-    ))]
-    #[asset(path = "textures/mummy/dying/spritesheet.png")]
-    mummy_dying: Handle<TextureAtlas>,
-
-    #[asset(texture_atlas(
-        tile_size_x = 900.,
-        tile_size_y = 900.,
-        columns = 11,
-        rows = 11,
-        padding_x = 0.,
-        padding_y = 0.
-    ))]
-    #[asset(path = "textures/mummy/hurt/spritesheet.png")]
-    mummy_hurt: Handle<TextureAtlas>,
-
-    #[asset(texture_atlas(
-        tile_size_x = 900.,
-        tile_size_y = 900.,
-        columns = 11,
-        rows = 11,
-        padding_x = 0.,
-        padding_y = 0.
-    ))]
-    #[asset(path = "textures/mummy/melee_attack/spritesheet.png")]
-    mummy_melee_attack: Handle<TextureAtlas>,
-
-    #[asset(texture_atlas(
-        tile_size_x = 900.,
-        tile_size_y = 900.,
-        columns = 11,
-        rows = 11,
-        padding_x = 0.,
-        padding_y = 0.
-    ))]
-    #[asset(path = "textures/mummy/run_melee_attack/spritesheet.png")]
-    mummy_run_melee_attack: Handle<TextureAtlas>,
-    
-    #[asset(texture_atlas(
-        tile_size_x = 900.,
-        tile_size_y = 900.,
-        columns = 11,
-        rows = 11,
-        padding_x = 0.,
-        padding_y = 0.
-    ))]
-    #[asset(path = "textures/mummy/running/spritesheet.png")]
-    mummy_running: Handle<TextureAtlas>,
-}
-
 fn main() {
     let mut app = App::new();
 
@@ -130,6 +29,7 @@ fn main() {
         .continue_to_state(AppState::Init)
         .with_collection::<AnimationHandles>()
         .build(&mut app);
+
     app.init_resource::<gamestate::GameData>()
         .add_event::<events::EndRoundEvent>()
         .add_event::<events::StartRoundEvent>()
