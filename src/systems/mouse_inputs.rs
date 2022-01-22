@@ -1,12 +1,14 @@
+use std::time::Duration;
+
 use bevy::{
     input::mouse::MouseButtonInput,
     math::{Vec2, Vec3},
     prelude::{Commands, EventReader, Res, Transform, Query, With, Camera},
     sprite::SpriteSheetBundle,
-    window::Windows,
+    window::Windows, core::Timer,
 };
 
-use crate::{animations::AnimationHandles, components::Position, utils};
+use crate::{animations::AnimationHandles, components::Position, utils, AnimationType};
 
 
 
@@ -18,6 +20,8 @@ fn spawn_monster(
     commands
         .spawn()
         .insert(Position::new(position.x, position.y))
+        .insert(AnimationType::Repeat)
+        .insert(Timer::new(Duration::from_millis(16), false))
         .insert_bundle(SpriteSheetBundle {
             texture_atlas: animation_handles.mummy_idle.clone_weak(),
             transform: Transform::from_scale(Vec3::splat(0.1))
