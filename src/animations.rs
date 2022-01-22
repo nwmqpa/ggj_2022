@@ -94,11 +94,11 @@ pub struct AnimationHandles {
     #[asset(texture_atlas(
         tile_size_x = 900.,
         tile_size_y = 900.,
-        columns = 11,
-        rows = 11,
+        columns = 12,
+        rows = 15,
         padding_x = 0.,
         padding_y = 0.
     ))]
-    #[asset(path = "textures/mummy/running/spritesheet.png")]
-    pub mummy_running: Handle<TextureAtlas>,
+    #[asset(path = "textures/mummy/idle/spritesheet.png")]
+    pub mummy_idle: Handle<TextureAtlas>,
 }

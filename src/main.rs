@@ -1,6 +1,7 @@
 use animations::AnimationHandles;
 use bevy::prelude::*;
 use bevy_asset_loader::AssetLoader;
+use systems::mouse_inputs::mouse_button_events;
 
 mod animations;
 mod components;
@@ -39,6 +40,7 @@ fn main() {
             SystemSet::on_enter(AppState::Init).with_system(systems::setup_game::setup_game),
         )
         .add_system(animate_sprite_system)
+        .add_system(mouse_button_events)
         .run();
 }
 
