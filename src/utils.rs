@@ -1,5 +1,7 @@
 use bevy::{math::{Vec3, Vec2}, window::Window, prelude::Transform};
 
+pub const MONSTER_VELOCITY: f32 = 30.0;
+
 pub fn window_to_world(
     position: Vec2,
     window: &Window,

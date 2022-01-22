@@ -8,7 +8,7 @@ use bevy::{
 
 use crate::{
     animations::AnimationHandles,
-    components::{Name, PlayerMovement, Position, Role},
+    components::{Name, PlayerMovement, Position, Role, Health},
     AnimationType,
 };
 
@@ -30,6 +30,7 @@ pub(crate) fn setup_game(
                 .with_translation(Vec3::new(-20., 0., 0.)),
             ..Default::default()
         })
+        .insert(Health::default())
         .insert(Timer::new(Duration::from_millis(16), false))
         .insert(PlayerMovement::default())
         .insert(AnimationType::Repeat);
@@ -45,6 +46,7 @@ pub(crate) fn setup_game(
                 .with_translation(Vec3::new(20., 0., 0.)),
             ..Default::default()
         })
+        .insert(Health::default())
         .insert(Timer::new(Duration::from_millis(16), false))
         .insert(PlayerMovement::default())
         .insert(AnimationType::Repeat);

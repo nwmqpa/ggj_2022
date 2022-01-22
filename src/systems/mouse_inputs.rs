@@ -8,7 +8,7 @@ use bevy::{
     window::Windows, core::Timer,
 };
 
-use crate::{animations::AnimationHandles, components::Position, utils, AnimationType};
+use crate::{animations::AnimationHandles, components::{Position, Enemy, Health}, utils, AnimationType};
 
 
 
@@ -20,11 +20,13 @@ fn spawn_monster(
     commands
         .spawn()
         .insert(Position::new(position.x, position.y))
+        .insert(Enemy)
         .insert(AnimationType::Repeat)
         .insert(Timer::new(Duration::from_millis(16), false))
+        .insert(Health::default())
         .insert_bundle(SpriteSheetBundle {
             texture_atlas: animation_handles.mummy_idle.clone_weak(),
-            transform: Transform::from_scale(Vec3::splat(0.1))
+            transform: Transform::from_scale(Vec3::splat(0.07))
                 .with_translation(position),
             ..Default::default()
         });

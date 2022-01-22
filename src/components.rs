@@ -21,6 +21,17 @@ pub enum Role {
     Assailant,
 }
 
+impl Role {
+    /// Returns `true` if the role is [`Assailant`].
+    ///
+    /// [`Assailant`]: Role::Assailant
+    pub fn is_assailant(&self) -> bool {
+        matches!(self, Self::Assailant)
+    }
+}
+
+#[derive(Component)]
+pub struct Enemy;
 #[derive(Component, Debug)]
 pub struct PlayerMovement {
     pub up: f32,
@@ -39,5 +50,14 @@ impl Default for PlayerMovement {
             right: Default::default(),
             scale: 50.0,
         }
+    }
+}
+
+#[derive(Component, Debug)]
+pub struct Health(f32);
+
+impl Default for Health {
+    fn default() -> Self {
+        Self(100.0)
     }
 }

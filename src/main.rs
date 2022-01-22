@@ -1,8 +1,8 @@
 use animations::AnimationHandles;
 use bevy::prelude::*;
 use bevy_asset_loader::AssetLoader;
+use systems::{mouse_inputs::mouse_button_events, movement::monster_movement};
 use systems::{
-    mouse_inputs::mouse_button_events,
     movement::*,
 };
 
@@ -45,6 +45,7 @@ fn main() {
         )
         .add_system(animate_sprite_system)
         .add_system(mouse_button_events)
+        .add_system(monster_movement)
         .add_system(sync_transform_position_system)
         .add_system(move_system)
         .add_system(keyboard_movement_system)
