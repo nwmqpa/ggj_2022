@@ -5,7 +5,7 @@ use bevy::{
     prelude::{KeyCode, Query, Res, Transform},
 };
 
-use crate::components::{PlayerMovement, Position};
+use crate::components::{PlayerMovement, Position, Role};
 
 pub fn keyboard_movement_system(
     keyboard_input: Res<Input<KeyCode>>,
@@ -35,7 +35,6 @@ pub fn keyboard_movement_system(
         } else if keyboard_input.just_released(KeyCode::Down) {
             mvt.down = 0.0;
         }
-        println!("Movement {mvt:?}");
     }
 }
 
@@ -45,11 +44,17 @@ pub fn sync_transform_position_system(mut query: Query<(&mut Transform, &Positio
     }
 }
 
-pub fn move_system(time: Res<Time>, mut query: Query<(&mut Position, &PlayerMovement)>) {
+pub fn move_system(time: Res<Time>, mut query: Query<(&mut Position, &PlayerMovement, &Role)>) {
     let delta = time.delta();
 
-    for (mut position, player_movement) in query.iter_mut() {
-        position.x += (player_movement.left + player_movement.right) * delta.as_secs_f32();
-        position.y += (player_movement.up + player_movement.down) * delta.as_secs_f32();
+    for (mut position, player_movement, role) in query.iter_mut() {
+        if let Role::Defender = role {
+            position.x += (player_movement.left + player_movement.right)
+                * delta.as_secs_f32()
+                * player_movement.scale;
+            position.y += (player_movement.up + player_movement.down)
+                * delta.as_secs_f32()
+                * player_movement.scale;
+        }
     }
 }

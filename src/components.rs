@@ -37,7 +37,7 @@ impl Default for PlayerMovement {
             down: Default::default(),
             left: Default::default(),
             right: Default::default(),
-            scale: 1.0,
+            scale: 50.0,
         }
     }
 }
