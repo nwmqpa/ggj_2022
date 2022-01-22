@@ -1,12 +1,13 @@
 #![allow(dead_code)]
 use bevy::{
     math::Vec3,
-    prelude::{Assets, Commands, Component, Image, Res, ResMut, Transform},
+    prelude::{
+        Assets, Commands, Component, Image, OrthographicCameraBundle, Res, ResMut, Transform,
+    },
     sprite::{SpriteSheetBundle, TextureAtlas},
 };
 
 use crate::{
-    animation::generate_texture_atlas_from_sprites,
     components::{Name, Position, Role},
     AnimationHandles,
 };

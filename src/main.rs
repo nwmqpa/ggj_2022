@@ -1,5 +1,5 @@
-use bevy::{asset::LoadState, ecs::event, prelude::*};
-use systems::setup_game::setup_game;
+use bevy::prelude::*;
+use bevy_asset_loader::{AssetCollection, AssetLoader};
 
 mod components;
 mod events;
