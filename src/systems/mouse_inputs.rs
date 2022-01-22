@@ -8,7 +8,7 @@ use bevy::{
     window::Windows, core::Timer,
 };
 
-use crate::{animations::AnimationHandles, components::Position, utils, AnimationType};
+use crate::{animations::AnimationHandles, components::{Position, Enemy}, utils, AnimationType};
 
 
 
@@ -20,6 +20,7 @@ fn spawn_monster(
     commands
         .spawn()
         .insert(Position::new(position.x, position.y))
+        .insert(Enemy)
         .insert(AnimationType::Repeat)
         .insert(Timer::new(Duration::from_millis(16), false))
         .insert_bundle(SpriteSheetBundle {
