@@ -1,7 +1,10 @@
 #![allow(dead_code)]
 use std::time::Duration;
 
-use bevy::{core::Timer, math::Vec3, prelude::*, sprite::SpriteSheetBundle};
+use bevy::{
+    core::Timer, math::Vec3, prelude::*, render::render_resource::Texture,
+    sprite::SpriteSheetBundle,
+};
 
 use crate::{
     animations::AnimationHandles,
@@ -9,7 +12,13 @@ use crate::{
     AnimationType,
 };
 
-pub(crate) fn setup_game(mut commands: Commands, animation_handles: Res<AnimationHandles>) {
+pub(crate) fn setup_game(
+    mut commands: Commands,
+    animation_handles: Res<AnimationHandles>,
+    server: Res<AssetServer>,
+) {
+    // spawn_map(&mut commands, server);
+
     commands
         .spawn()
         .insert(Position::new(-20., 0.))
@@ -41,4 +50,15 @@ pub(crate) fn setup_game(mut commands: Commands, animation_handles: Res<Animatio
         .insert(AnimationType::Repeat);
 
     commands.spawn_bundle(OrthographicCameraBundle::new_2d());
+}
+
+fn spawn_map(commands: &mut Commands, server: Res<AssetServer>) {
+    let ground_handle = server.load("textures/terrain/ground.png");
+
+    commands.spawn().insert_bundle(SpriteBundle {
+        texture: ground_handle.clone_weak(),
+        transform: Transform::from_scale(Vec3::splat(1.0)).with_translation(Vec3::new(0., 0., 0.0)),
+        ..Default::default()
+    });
+    commands.insert_resource(ground_handle);
 }
