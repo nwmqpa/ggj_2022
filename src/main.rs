@@ -1,9 +1,9 @@
-use bevy::{asset::LoadState, ecs::event, prelude::*};
-use systems::setup_game::setup_game;
+use bevy::{asset::LoadState, prelude::*};
 
 mod events;
 mod gamestate;
 mod systems;
+mod components;
 
 use std::collections::HashMap;
 
@@ -39,7 +39,9 @@ fn main() {
         .add_state(AppState::PreInit)
         .add_system_set(SystemSet::on_enter(AppState::PreInit).with_system(load_textures))
         .add_system_set(SystemSet::on_update(AppState::PreInit).with_system(check_textures))
-        .add_system_set(SystemSet::on_enter(AppState::Init).with_system(systems::setup_game::setup_game))
+        .add_system_set(
+            SystemSet::on_enter(AppState::Init).with_system(systems::setup_game::setup_game),
+        )
         .add_system(animate_sprite_system)
         .run();
 }

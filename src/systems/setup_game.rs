@@ -1,32 +1,15 @@
 #![allow(dead_code)]
 use bevy::{
     math::Vec3,
-    prelude::{Assets, Commands, Component, Image, ResMut, Transform},
+    prelude::{Assets, Commands, Image, OrthographicCameraBundle, ResMut, Transform},
     sprite::{SpriteSheetBundle, TextureAtlas},
 };
 
-use crate::{animation::generate_texture_atlas_from_sprites, AnimationHandles};
-
-#[derive(Component)]
-struct Position {
-    x: f32,
-    y: f32,
-}
-
-impl Position {
-    fn new(x: f32, y: f32) -> Self {
-        Position { x, y }
-    }
-}
-
-#[derive(Component)]
-struct Name(String);
-
-#[derive(Component)]
-enum Role {
-    Defender,
-    Assailant,
-}
+use crate::{
+    animation::generate_texture_atlas_from_sprites,
+    components::{Name, Position, Role},
+    AnimationHandles,
+};
 
 pub(crate) fn setup_game(
     mut commands: Commands,
@@ -80,4 +63,6 @@ pub(crate) fn setup_game(
             transform: Transform::from_scale(Vec3::splat(1.0)),
             ..Default::default()
         });
+
+    commands.spawn_bundle(OrthographicCameraBundle::new_2d());
 }
