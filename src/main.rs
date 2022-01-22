@@ -46,5 +46,5 @@ fn setup(
     mut texture_atlases: ResMut<Assets<TextureAtlas>>,
     mut textures: ResMut<Assets<Image>>,
 ) {
-    todo!();
+    commands.spawn_bundle(OrthographicCameraBundle::new_2d());
 }
