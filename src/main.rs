@@ -1,6 +1,12 @@
-use bevy::{asset::LoadState, prelude::*};
-use image::{ImageBuffer, RgbaImage};
+use std::collections::HashMap;
 
+use bevy::{asset::LoadState, prelude::*};
+
+use crate::animation::generate_texture_atlas_from_sprites;
+
+mod animation;
+
+#[allow(dead_code)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 enum AppState {
     PreInit,
@@ -9,13 +15,9 @@ enum AppState {
 }
 
 #[derive(Default)]
-struct SpriteHandles {
-    hero_guy_idle_handles: Vec<HandleUntyped>,
-}
-
-#[derive(Default)]
-struct TextureAtlasHandles {
-    hero_guy_idle_handle: Handle<TextureAtlas>,
+struct AnimationHandles {
+    sprite_handles: HashMap<String, Vec<HandleUntyped>>,
+    texture_atlas_handles: HashMap<String, Handle<TextureAtlas>>,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, Component)]
@@ -26,8 +28,7 @@ enum AnimationType {
 
 fn main() {
     App::new()
-        .init_resource::<SpriteHandles>()
-        .init_resource::<TextureAtlasHandles>()
+        .init_resource::<AnimationHandles>()
         .add_plugins(DefaultPlugins)
         .add_state(AppState::PreInit)
         .add_system_set(SystemSet::on_enter(AppState::PreInit).with_system(load_textures))
@@ -37,149 +38,71 @@ fn main() {
         .run();
 }
 
-fn load_textures(mut sprite_handles: ResMut<SpriteHandles>, asset_server: Res<AssetServer>) {
-    sprite_handles.hero_guy_idle_handles =
-        asset_server.load_folder("textures/hero_guy/dying").unwrap();
+fn load_textures(mut sprite_handles: ResMut<AnimationHandles>, asset_server: Res<AssetServer>) {
+    let animations = vec![
+        (
+            "dying".to_string(),
+            asset_server.load_folder("textures/hero_guy/dying").unwrap(),
+        ),
+        (
+            "idle".to_string(),
+            asset_server.load_folder("textures/hero_guy/idle").unwrap(),
+        ),
+    ];
+
+    sprite_handles.sprite_handles = animations.into_iter().collect();
 }
 
 fn check_textures(
     mut state: ResMut<State<AppState>>,
-    sprite_handles: ResMut<SpriteHandles>,
+    animation_handles: ResMut<AnimationHandles>,
     asset_server: Res<AssetServer>,
 ) {
-    let handle_ids = []
-        .iter()
-        .chain(&sprite_handles.hero_guy_idle_handles)
-        .map(|handle| handle.id);
+    let mut handle_ids = vec![];
 
-    if let LoadState::Loaded = asset_server.get_group_load_state(handle_ids) {
+    for (_, handles) in animation_handles.sprite_handles.iter() {
+        handle_ids.extend(handles);
+    }
+
+    if let LoadState::Loaded = asset_server.get_group_load_state(handle_ids.iter().map(|h| h.id)) {
         state.set(AppState::Init).unwrap();
     }
 }
 
-fn squareize(items: usize) -> (usize, usize) {
-    let mut x = 1;
-    let mut y = 1;
-
-    for i in 1..(items + 1) {
-        if x * y < i {
-            if (x * (y + 1)) >= i && (x * (y + 1)) < ((x + 1) * (x + 1)) {
-                y += 1;
-            } else {
-                x += 1;
-                y = x;
-            }
-        }
-    }
-    (x, y)
-}
-
 fn setup(
     mut commands: Commands,
-    sprite_handles: Res<SpriteHandles>,
+    mut animation_handles: ResMut<AnimationHandles>,
     mut texture_atlases: ResMut<Assets<TextureAtlas>>,
     mut textures: ResMut<Assets<Image>>,
-    mut texture_atlas_handles: ResMut<TextureAtlasHandles>,
 ) {
-    // HeroGuy Idle
-    {
-        let num_steps = 10;
+    let mut texture_atlas_handles = vec![];
 
-        let mut texture_atlas_builder =
-            TextureAtlasBuilder::default().max_size(Vec2::new(8192., 16384.));
-
-        let mut i = 0;
-
-        let key_frames = sprite_handles.hero_guy_idle_handles.len();
-        let first_handle = sprite_handles.hero_guy_idle_handles.first().unwrap();
-        let first_texture = textures.get(first_handle).unwrap();
-
-        let sprite_width = first_texture.texture_descriptor.size.width;
-        let sprite_height = first_texture.texture_descriptor.size.height;
-
-        let (x, y) = squareize(key_frames);
-
-
-
-        for handles in sprite_handles.hero_guy_idle_handles.windows(2) {
-            let first_texture = textures.get(&handles[0]).unwrap();
-            let last_texture = textures.get(&handles[1]).unwrap();
-
-            let texture_descriptor = first_texture.texture_descriptor.clone();
-            let sampler_descriptor = first_texture.sampler_descriptor.clone();
-
-            let first_image = RgbaImage::from_raw(
-                first_texture.texture_descriptor.size.width,
-                first_texture.texture_descriptor.size.height,
-                first_texture.data.clone(),
-            )
-            .unwrap();
-
-            let last_image = RgbaImage::from_raw(
-                last_texture.texture_descriptor.size.width,
-                last_texture.texture_descriptor.size.height,
-                last_texture.data.clone(),
-            )
-            .unwrap();
-
-            let stepping = 1.0 / num_steps as f32;
-            for step in 0..=num_steps {
-                let position = stepping * step as f32;
-
-                let buffer = ImageBuffer::from_fn(
-                    texture_descriptor.size.width,
-                    texture_descriptor.size.height,
-                    |x, y| {
-                        imageproc::pixelops::interpolate(
-                            *first_image.get_pixel(x, y),
-                            *last_image.get_pixel(x, y),
-                            position,
-                        )
-                    },
-                );
-
-                let data = buffer.to_vec();
-
-                image::save_buffer(
-                    format!("./outputs/image_{:04}.png", i),
-                    &data,
-                    buffer.width(),
-                    buffer.height(),
-                    image::ColorType::Rgba8,
-                )
-                .unwrap();
-
-                let texture_handle = textures.add(Image {
-                    data,
-                    texture_descriptor: texture_descriptor.clone(),
-                    sampler_descriptor: sampler_descriptor.clone(),
-                });
-                let texture = textures.get(&texture_handle).unwrap();
-
-                texture_atlas_builder.add_texture(texture_handle.clone_weak(), texture);
-                i += 1;
-            }
-        }
-        let texture_atlas = texture_atlas_builder.finish(&mut textures).unwrap();
-        let texture_atlas_texture = texture_atlas.texture.clone();
-
-        commands.spawn_bundle(SpriteBundle {
-            texture: texture_atlas_texture,
-            transform: Transform::from_xyz(-300.0, 0.0, 0.0).with_scale(Vec3::splat(0.1)),
-            ..Default::default()
-        });
-        let atlas_handle = texture_atlases.add(texture_atlas);
-        texture_atlas_handles.hero_guy_idle_handle = atlas_handle;
+    for (name, handles) in animation_handles.sprite_handles.iter() {
+        texture_atlas_handles.push((
+            name.clone(),
+            generate_texture_atlas_from_sprites(
+                10,
+                handles.clone(),
+                &mut textures,
+                &mut texture_atlases,
+            ),
+        ));
     }
+
+    animation_handles.texture_atlas_handles = texture_atlas_handles.into_iter().collect();
 
     commands
         .spawn_bundle(SpriteSheetBundle {
-            texture_atlas: texture_atlas_handles.hero_guy_idle_handle.clone(),
+            texture_atlas: animation_handles
+                .texture_atlas_handles
+                .get("idle")
+                .unwrap()
+                .clone_weak(),
             transform: Transform::from_scale(Vec3::splat(1.0)),
             ..Default::default()
         })
-        .insert(Timer::from_seconds(0.1, true))
-        .insert(AnimationType::Once);
+        .insert(Timer::from_seconds(0.016, true))
+        .insert(AnimationType::Repeat);
 
     commands.spawn_bundle(OrthographicCameraBundle::new_2d());
 }
