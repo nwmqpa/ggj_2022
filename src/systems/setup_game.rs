@@ -1,12 +1,12 @@
 #![allow(dead_code)]
-use bevy::{
-    math::Vec3,
-    prelude::{OrthographicCameraBundle, Transform, Commands, Res},
-    sprite::SpriteSheetBundle,
-};
+use std::time::Duration;
+
+use bevy::{core::Timer, math::Vec3, prelude::*, sprite::SpriteSheetBundle};
 
 use crate::{
-    components::{Name, Position, Role}, animations::AnimationHandles,
+    animations::AnimationHandles,
+    components::{Name, Position, Role},
+    AnimationType,
 };
 
 pub(crate) fn setup_game(mut commands: Commands, animation_handles: Res<AnimationHandles>) {
@@ -17,9 +17,12 @@ pub(crate) fn setup_game(mut commands: Commands, animation_handles: Res<Animatio
         .insert(Role::Defender)
         .insert_bundle(SpriteSheetBundle {
             texture_atlas: animation_handles.hero_guy_idle.clone_weak(),
-            transform: Transform::from_scale(Vec3::splat(1.0)),
+            transform: Transform::from_scale(Vec3::splat(0.1))
+                .with_translation(Vec3::new(-20., 0., 0.)),
             ..Default::default()
-        });
+        })
+        .insert(Timer::new(Duration::from_millis(16), false))
+        .insert(AnimationType::Repeat);
 
     commands
         .spawn()
@@ -28,9 +31,12 @@ pub(crate) fn setup_game(mut commands: Commands, animation_handles: Res<Animatio
         .insert(Role::Assailant)
         .insert_bundle(SpriteSheetBundle {
             texture_atlas: animation_handles.hero_guy_idle.clone_weak(),
-            transform: Transform::from_scale(Vec3::splat(1.0)),
+            transform: Transform::from_scale(Vec3::splat(0.1))
+                .with_translation(Vec3::new(20., 0., 0.)),
             ..Default::default()
-        });
+        })
+        .insert(Timer::new(Duration::from_millis(16), false))
+        .insert(AnimationType::Repeat);
 
     commands.spawn_bundle(OrthographicCameraBundle::new_2d());
 }
