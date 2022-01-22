@@ -1,4 +1,7 @@
-use bevy::{asset::LoadState, prelude::*};
+use bevy::{asset::LoadState, prelude::*, ecs::event};
+
+mod systems;
+mod events;
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 enum AppState {
@@ -21,6 +24,8 @@ fn main() {
     App::new()
         .init_resource::<SpriteHandles>()
         .init_resource::<TextureAtlasHandles>()
+        .add_event::<events::EndRoundEvent>()
+        .add_event::<events::StartRoundEvent>()
         .add_plugins(DefaultPlugins)
         .add_state(AppState::PreInit)
         .add_system_set(SystemSet::on_enter(AppState::PreInit).with_system(load_textures))
