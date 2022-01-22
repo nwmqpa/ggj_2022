@@ -2,8 +2,13 @@
 edition = "2021"
 name = "gamejam"
 version = "0.1.0"
+default-run = "gamejam"
+
+[[bin]]
+name = "spritesheet_gen"
 
 [dependencies]
 bevy = { version = "*", features = ["dynamic"] }
 imageproc = "*"
 image = "0.23.14"
+bevy_asset_loader = { version = "0.8.0", features = ["render"] }
