@@ -44,7 +44,6 @@ struct AnimationHandles {
     #[asset(path = "textures/hero_guy/dying/spritesheet.png")]
     hero_guy_dying: Handle<TextureAtlas>,
 
-    
     #[asset(texture_atlas(
         tile_size_x = 560.,
         tile_size_y = 480.,
@@ -55,7 +54,7 @@ struct AnimationHandles {
     ))]
     #[asset(path = "textures/hero_guy/melee_attack/spritesheet.png")]
     hero_guy_melee_attack: Handle<TextureAtlas>,
-    
+
     #[asset(texture_atlas(
         tile_size_x = 560.,
         tile_size_y = 480.,
@@ -66,6 +65,62 @@ struct AnimationHandles {
     ))]
     #[asset(path = "textures/hero_guy/running/spritesheet.png")]
     hero_guy_running: Handle<TextureAtlas>,
+
+    
+    #[asset(texture_atlas(
+        tile_size_x = 900.,
+        tile_size_y = 900.,
+        columns = 12,
+        rows = 13,
+        padding_x = 0.,
+        padding_y = 0.
+    ))]
+    #[asset(path = "textures/mummy/dying/spritesheet.png")]
+    mummy_dying: Handle<TextureAtlas>,
+
+    #[asset(texture_atlas(
+        tile_size_x = 900.,
+        tile_size_y = 900.,
+        columns = 11,
+        rows = 11,
+        padding_x = 0.,
+        padding_y = 0.
+    ))]
+    #[asset(path = "textures/mummy/hurt/spritesheet.png")]
+    mummy_hurt: Handle<TextureAtlas>,
+
+    #[asset(texture_atlas(
+        tile_size_x = 900.,
+        tile_size_y = 900.,
+        columns = 11,
+        rows = 11,
+        padding_x = 0.,
+        padding_y = 0.
+    ))]
+    #[asset(path = "textures/mummy/melee_attack/spritesheet.png")]
+    mummy_melee_attack: Handle<TextureAtlas>,
+
+    #[asset(texture_atlas(
+        tile_size_x = 900.,
+        tile_size_y = 900.,
+        columns = 11,
+        rows = 11,
+        padding_x = 0.,
+        padding_y = 0.
+    ))]
+    #[asset(path = "textures/mummy/run_melee_attack/spritesheet.png")]
+    mummy_run_melee_attack: Handle<TextureAtlas>,
+    
+    #[asset(texture_atlas(
+        tile_size_x = 900.,
+        tile_size_y = 900.,
+        columns = 11,
+        rows = 11,
+        padding_x = 0.,
+        padding_y = 0.
+    ))]
+    #[asset(path = "textures/mummy/running/spritesheet.png")]
+    mummy_running: Handle<TextureAtlas>,
 }
 
 fn main() {
