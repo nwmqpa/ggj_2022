@@ -5,7 +5,7 @@ use bevy::{
     sprite::{SpriteSheetBundle, TextureAtlas},
 };
 
-use crate::{animation::generate_texture_atlas_from_sprites, AnimationHandles};
+use crate::AnimationHandles;
 
 #[derive(Component)]
 struct Position {
